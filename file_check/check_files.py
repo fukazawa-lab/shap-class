@@ -108,5 +108,7 @@ def validate_target_column(target_series):
         return False
     else:
         print("targetカラムの値は連続しています。クラスが漏れていません。")
-
+    
+    print("データセットのtargetカラムが正しくフォーマットされています。")
+    
     return True
