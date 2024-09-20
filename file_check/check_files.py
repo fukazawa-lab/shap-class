@@ -59,3 +59,54 @@ def visualize_labels(dataset):
     plt.xlabel("ラベル")
     plt.ylabel("事例数")
     plt.show()
+
+
+
+# 新しく追加する関数
+def check_class_difference(train_csv, validation_csv, target_column):
+    # CSVファイルを読み込み
+    train_df = pd.read_csv(train_csv)
+    validation_df = pd.read_csv(validation_csv)
+
+    # 各データセットのtargetカラムのユニークなクラスを取得
+    train_classes = set(train_df[target_column].unique())
+    validation_classes = set(validation_df[target_column].unique())
+
+    # どちらかにしかないクラスを取得
+    train_only_classes = train_classes - validation_classes
+    validation_only_classes = validation_classes - train_classes
+
+    # 結果を表示
+    if train_only_classes or validation_only_classes:
+        if train_only_classes:
+            print(f"Trainデータセットにのみ存在するクラス: {train_only_classes}")
+        if validation_only_classes:
+            print(f"Validationデータセットにのみ存在するクラス: {validation_only_classes}")
+    else:
+        print("両方のデータセットでクラスが一致しています。")
+
+
+def validate_target_column(target_series):
+    # 1. 整数以外が入っていないことを確認
+    if not pd.api.types.is_integer_dtype(target_series):
+        print("エラー: targetカラムに整数以外の値が含まれています")
+        return False
+
+    # 2. 最小値が0であることを確認
+    min_value = target_series.min()
+    if min_value != 0:
+        print(f"エラー: targetカラムの最小値は{min_value}です。0から始めてください。")
+        return False
+    else:
+        print(f"targetカラムの最小値は{min_value}です。0から始まっています。")
+
+    # 3. 最小値と最大値の間に漏れている整数がないことを確認
+    max_value = target_series.max()
+    missing_classes = set(range(min_value, max_value + 1)) - set(target_series.unique())
+    if missing_classes:
+        print(f"エラー: クラスが漏れています。以下のクラスが存在しません: {missing_classes}")
+        return False
+    else:
+        print("targetカラムの値は連続しています。クラスが漏れていません。")
+
+    return True
