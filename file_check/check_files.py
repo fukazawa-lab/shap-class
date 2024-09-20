@@ -38,15 +38,31 @@ def visualize_text_length(dataset: Dataset):
 
 
 
-def visualize_labels(dataset):
-    """データセット中のラベル分布をグラフとして描画"""
-    # データセット中のラベルの数を数える
-    label_counter = Counter()
-    for data in dataset:
-        label_id = data["label"]
-        label_counter[label_id] += 1
+import pandas as pd
+from collections import Counter
+import matplotlib.pyplot as plt
 
-    # ラベルIDをラベル名に変換するための辞書
+def visualize_labels(file_name, column_name):
+    """指定されたファイルのカラム内のラベル分布をグラフとして描画"""
+    # ファイルを読み込む
+    try:
+        df = pd.read_csv(file_name)
+    except FileNotFoundError:
+        print(f"エラー: ファイル {file_name} が見つかりません。")
+        return
+    except Exception as e:
+        print(f"エラー: ファイル {file_name} を読み込む際にエラーが発生しました: {e}")
+        return
+
+    # 指定されたカラムが存在するかを確認
+    if column_name not in df.columns:
+        print(f"エラー: ファイル {file_name} に {column_name} カラムが含まれていません。")
+        return
+
+    # データセット中のラベルの数を数える
+    label_counter = Counter(df[column_name])
+
+    # ラベルIDをラベル名に変換するための辞書（任意で変更可能）
     label_id_to_name = {label_id: f"ラベル{label_id}" for label_id in label_counter.keys()}
 
     # グラフのサイズを設定
@@ -59,6 +75,7 @@ def visualize_labels(dataset):
     plt.xlabel("ラベル")
     plt.ylabel("事例数")
     plt.show()
+
 
 
 
@@ -103,9 +120,9 @@ def check_class_difference(train_csv, validation_csv, target_column):
     # 結果を表示
     if train_only_classes or validation_only_classes:
         if train_only_classes:
-            print(f"Trainデータセットにのみ存在するクラス: {train_only_classes}")
+            print(f"エラー：Trainデータセットにのみ存在するクラス: {train_only_classes}")
         if validation_only_classes:
-            print(f"Validationデータセットにのみ存在するクラス: {validation_only_classes}")
+            print(f"エラー：Validationデータセットにのみ存在するクラス: {validation_only_classes}")
     else:
         print("両方のデータセットでクラスが一致しています。")
 
