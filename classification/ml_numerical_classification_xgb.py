@@ -14,12 +14,12 @@ def train_and_evaluate_model(folder, train_path, valid_path):
     train_df = pd.read_csv(folder+"/"+train_path)
     valid_df = pd.read_csv(folder+"/"+valid_path)
 
-    X_train = train_df.drop(columns=['target'])
-    y_train = train_df['target']
-    X_valid = valid_df.drop(columns=['target'])
-    y_valid = valid_df['target']
+    X_train = train_df.drop(columns=['label'])
+    y_train = train_df['label']
+    X_valid = valid_df.drop(columns=['label'])
+    y_valid = valid_df['label']
 
-    all_labels = train_df['target'].tolist() + valid_df['target'].tolist()
+    all_labels = train_df['label'].tolist() + valid_df['label'].tolist()
     unique_labels = np.unique(all_labels)
     
     # ラベルエンコーディングの設定
@@ -35,7 +35,7 @@ def train_and_evaluate_model(folder, train_path, valid_path):
     predictions_df = pd.DataFrame({
         'label': y_valid,
         'predicted_label': label_encoder.inverse_transform(model.predict(X_valid)),
-        **valid_df.drop(columns=['target']).to_dict('series')
+        **valid_df.drop(columns=['label']).to_dict('series')
     })
     predictions_df.to_csv('results/classification/result_num_xgb.csv', index=False)
     conf_matrix_df = pd.DataFrame(confusion_matrix(predictions_df['label'], predictions_df['predicted_label']),
