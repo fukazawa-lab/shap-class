@@ -12,12 +12,12 @@ def load_numerical_data(train_path: str, valid_path: str) -> Tuple[pd.DataFrame,
     return train_data, validation_data
 
 def preprocess_numerical_data(train_data: pd.DataFrame, validation_data: pd.DataFrame) -> Tuple[csr_matrix, np.ndarray, csr_matrix, np.ndarray, LabelEncoder]:
-    all_labels = pd.concat([train_data['target'], validation_data['target']])
+    all_labels = pd.concat([train_data['label'], validation_data['label']])
 
-    X_train = train_data.drop(columns=['target'])
-    y_train = train_data['target']
-    X_val = validation_data.drop(columns=['target'])
-    y_val = validation_data['target']
+    X_train = train_data.drop(columns=['label'])
+    y_train = train_data['label']
+    X_val = validation_data.drop(columns=['label'])
+    y_val = validation_data['label']
 
     label_encoder = LabelEncoder()
     all_labels_encoded = label_encoder.fit_transform(all_labels)
@@ -42,7 +42,7 @@ def train_and_evaluate_numerical_model(model, X_train: csr_matrix, X_val: csr_ma
     predictions_df = pd.DataFrame({
         'label': y_val,
         'predicted_label': original_valid_predictions,
-        **validation_data.drop(columns=['target']).to_dict('series')
+        **validation_data.drop(columns=['label']).to_dict('series')
     })
     predictions_df.to_csv(f'results/classification/result_{output_prefix}.csv', index=False)
 
