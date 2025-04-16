@@ -80,14 +80,14 @@ def visualize_labels(file_name, column_name):
 
 
 # 新しく追加する関数
-def check_class_difference(train_csv, validation_csv, target_column):
+def check_class_difference(train_csv, validation_csv, label_column):
     # CSVファイルを読み込み
     train_df = pd.read_csv(train_csv)
     validation_df = pd.read_csv(validation_csv)
 
-    # 各データセットのtargetカラムのユニークなクラスを取得
-    train_classes = set(train_df[target_column].unique())
-    validation_classes = set(validation_df[target_column].unique())
+    # 各データセットのlabelカラムのユニークなクラスを取得
+    train_classes = set(train_df[label_column].unique())
+    validation_classes = set(validation_df[label_column].unique())
 
     # どちらかにしかないクラスを取得
     train_only_classes = train_classes - validation_classes
@@ -104,14 +104,14 @@ def check_class_difference(train_csv, validation_csv, target_column):
 
 
 # 新しく追加する関数
-def check_class_difference(train_csv, validation_csv, target_column):
+def check_class_difference(train_csv, validation_csv, label_column):
     # CSVファイルを読み込み
     train_df = pd.read_csv(train_csv)
     validation_df = pd.read_csv(validation_csv)
 
-    # 各データセットのtargetカラムのユニークなクラスを取得
-    train_classes = set(train_df[target_column].unique())
-    validation_classes = set(validation_df[target_column].unique())
+    # 各データセットのlabelカラムのユニークなクラスを取得
+    train_classes = set(train_df[label_column].unique())
+    validation_classes = set(validation_df[label_column].unique())
 
     # どちらかにしかないクラスを取得
     train_only_classes = train_classes - validation_classes
@@ -129,7 +129,7 @@ def check_class_difference(train_csv, validation_csv, target_column):
 
 import pandas as pd
 
-def validate_target_column(file_name):
+def validate_label_column(file_name):
     # ファイルを読み込む
     try:
         df = pd.read_csv(file_name)
@@ -140,32 +140,32 @@ def validate_target_column(file_name):
         print(f"エラー: ファイル {file_name} を読み込む際にエラーが発生しました: {e}")
         return False
 
-    # targetカラムが存在するかを確認
-    if 'target' not in df.columns:
-        print(f"エラー: ファイル {file_name} に target カラムが含まれていません。")
+    # labelカラムが存在するかを確認
+    if 'label' not in df.columns:
+        print(f"エラー: ファイル {file_name} に label カラムが含まれていません。")
         return False
 
-    target_series = df['target']
+    label_series = df['label']
 
     # 1. 整数以外が入っていないことを確認
-    if not pd.api.types.is_integer_dtype(target_series):
-        print(f"エラー: ファイル {file_name} の target カラムに整数以外の値が含まれています")
+    if not pd.api.types.is_integer_dtype(label_series):
+        print(f"エラー: ファイル {file_name} の label カラムに整数以外の値が含まれています")
         return False
 
     # 2. 最小値が0であることを確認
-    min_value = target_series.min()
+    min_value = label_series.min()
     if min_value != 0:
-        print(f"エラー: ファイル {file_name} の target カラムの最小値は {min_value} です。0から始めてください。")
+        print(f"エラー: ファイル {file_name} の label カラムの最小値は {min_value} です。0から始めてください。")
         return False
 
     # 3. 最小値と最大値の間に漏れている整数がないことを確認
-    max_value = target_series.max()
-    missing_classes = set(range(min_value, max_value + 1)) - set(target_series.unique())
+    max_value = label_series.max()
+    missing_classes = set(range(min_value, max_value + 1)) - set(label_series.unique())
     if missing_classes:
         print(f"エラー: ファイル {file_name} にクラスが漏れています。以下のクラスが存在しません: {missing_classes}")
         return False
 
-    print(f"{file_name}のデータセットのtargetカラムが正しくフォーマットされています。")
+    print(f"{file_name}のデータセットのlabelカラムが正しくフォーマットされています。")
 
     return True
 
